@@ -93,11 +93,11 @@ public class EditorActivity extends AppCompatActivity {
                 String selection = (String) parent.getItemAtPosition(position);
                 if (!TextUtils.isEmpty(selection)) {
                     if (selection.equals(getString(R.string.gender_male))) {
-                        mGender = PetEntry.GENDER_MALE; // Male
+                        mGender = PetEntry.GENDER_MALE;
                     } else if (selection.equals(getString(R.string.gender_female))) {
-                        mGender = PetEntry.GENDER_FEMALE; // Female
+                        mGender = PetEntry.GENDER_FEMALE;
                     } else {
-                        mGender = PetEntry.GENDER_UNKNOWN; // Unknown
+                        mGender = PetEntry.GENDER_UNKNOWN;
                     }
                 }
             }
@@ -105,33 +105,43 @@ public class EditorActivity extends AppCompatActivity {
             // Because AdapterView is an abstract class, onNothingSelected must be defined
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                mGender = 0; // Unknown
+                mGender = PetEntry.GENDER_UNKNOWN;
             }
         });
     }
 
     private void insertPet() {
 
+        // Read from input fields
+        // Use trim to eliminate leading or trailing white space
         String petName = mNameEditText.getText().toString().trim();
         String petBreed = mBreedEditText.getText().toString().trim();
         String petWeight = mWeightEditText.getText().toString().trim();
         int weight = Integer.parseInt(petWeight);
 
+        // Create database helper
         PetDbHelper mDbHelper = new PetDbHelper(this);
 
+        // Gets the database in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        // Create a ContentValues object where column names are the keys,
+        // and pet attributes from the editor are the values.
         ContentValues values = new ContentValues();
         values.put(PetEntry.COLUMN_PET_NAME, petName);
         values.put(PetEntry.COLUMN_PET_BREED, petBreed);
         values.put(PetEntry.COLUMN_PET_GENDER, mGender);
         values.put(PetEntry.COLUMN_PET_WEIGHT, weight);
 
+        // Insert a new row for pet in the database, returning the ID of that new row.
         long newRowId = db.insert(PetEntry.TABLE_NAME, null, values);
 
+        // Show a toast message depending on whether or not the insertion was successful
         if (newRowId == -1) {
+            // If the row ID is -1, then there was an error with insertion.
             Toast.makeText(this, "Error with saving pet", Toast.LENGTH_SHORT).show();
         } else {
+            // Otherwise, the insertion was successful and we can display a toast with the row ID.
             Toast.makeText(this, "Pet saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
         }
     }
@@ -150,8 +160,9 @@ public class EditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Do nothing for now
+                /// Save pet to database
                 insertPet();
+                // Exit activity
                 finish();
                 return true;
             // Respond to a click on the "Delete" menu option

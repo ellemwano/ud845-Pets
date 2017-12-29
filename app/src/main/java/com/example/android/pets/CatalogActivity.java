@@ -22,6 +22,7 @@ import com.example.android.pets.data.PetDbHelper;
  */
 public class CatalogActivity extends AppCompatActivity {
 
+    // Database helper that will provide us access to the database
     private PetDbHelper mDbHelper;
 
     @Override
@@ -39,10 +40,12 @@ public class CatalogActivity extends AppCompatActivity {
             }
         });
 
+        /* To access our database, we instantiate our subclass of SQLiteOpenHelper
+         and pass the context, which is the current activity.
+        */
         mDbHelper = new PetDbHelper(this);
     }
 
-    // Show CatalogActivity with solution code:
     @Override
     protected void onStart() {
         super.onStart();
@@ -59,8 +62,7 @@ public class CatalogActivity extends AppCompatActivity {
         // Create and/or open a database to read from it
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        // Perform a query
-        // to get a Cursor that contains all rows from the pets table.
+        // Perform a query on the pets table
         Cursor cursor = db.query(PetEntry.TABLE_NAME, null,null,
                 null, null, null, null);
 
@@ -76,16 +78,29 @@ public class CatalogActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Helper method to insert hardcoded pet data into the database. For debugging purposes only.
+     */
     public void insertPet() {
 
+        // Gets the database in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        // Create a ContentValues object where column names are the keys,
+        // and Toto's pet attributes are the values.
         ContentValues values = new ContentValues();
         values.put(PetEntry.COLUMN_PET_NAME, "Toto");
         values.put(PetEntry.COLUMN_PET_BREED, "Terrier");
         values.put(PetEntry.COLUMN_PET_GENDER, PetEntry.GENDER_MALE);
         values.put(PetEntry.COLUMN_PET_WEIGHT, 7);
 
+        // Insert a new row for Toto in the database, returning the ID of that new row.
+        // The first argument for db.insert() is the pets table name.
+        // The second argument provides the name of a column in which the framework
+        // can insert NULL in the event that the ContentValues is empty (if
+        // this is set to "null", then the framework will not insert a row when
+        // there are no values).
+        // The third argument is the ContentValues object containing the info for Toto.
         long newRowId = db.insert(PetEntry.TABLE_NAME, null, values);
 
         Log.v("CatalogActivity", "New row ID" + newRowId);
@@ -105,7 +120,6 @@ public class CatalogActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Insert dummy data" menu option
             case R.id.action_insert_dummy_data:
-                // Do nothing for now
                 insertPet();
                 displayDatabaseInfo();
                 return true;
