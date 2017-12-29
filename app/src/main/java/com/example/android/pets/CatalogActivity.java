@@ -40,8 +40,15 @@ public class CatalogActivity extends AppCompatActivity {
         });
 
         mDbHelper = new PetDbHelper(this);
+    }
+
+    // Show CatalogActivity with solution code:
+    @Override
+    protected void onStart() {
+        super.onStart();
         displayDatabaseInfo();
     }
+
 
     /**
      * Temporary helper method to display information in the onscreen TextView about the state of
