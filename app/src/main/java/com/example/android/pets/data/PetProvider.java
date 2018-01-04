@@ -140,8 +140,19 @@ public class PetProvider extends ContentProvider{
             throw new IllegalArgumentException("Pet requires a name");
         }
 
-        // TODO: Finish sanity checking the rest of the attributes in ContentValues
+        // No need to check the breed, any value is valid (including null).
 
+        // Check that the gender is not null and valid (either male, female or unknown)
+        Integer gender = values. getAsInteger(PetContract.PetEntry.COLUMN_PET_GENDER);
+        if (gender == null || !PetContract.PetEntry.isValidGender(gender)) {
+            throw new IllegalArgumentException("Pet requires a valid gender");
+        }
+
+        // Check that the weight is positive, an if null give it a value of 0
+        Integer weight = values. getAsInteger(PetContract.PetEntry.COLUMN_PET_WEIGHT);
+        if (weight != null && weight < 0) {
+            throw new IllegalArgumentException("Pet requires a valid weight");
+        }
 
         // Get writable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
