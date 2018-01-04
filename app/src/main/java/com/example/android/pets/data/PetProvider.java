@@ -134,7 +134,16 @@ public class PetProvider extends ContentProvider{
      */
     private Uri insertPet(Uri uri, ContentValues values) {
 
-        // Get writeable database
+        // Check that the name is not null
+        String name = values.getAsString(PetContract.PetEntry.COLUMN_PET_NAME);
+        if (name == null) {
+            throw new IllegalArgumentException("Pet requires a name");
+        }
+
+        // TODO: Finish sanity checking the rest of the attributes in ContentValues
+
+
+        // Get writable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
         // Insert the new pet with the given values
