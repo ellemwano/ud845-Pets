@@ -60,11 +60,6 @@ public class CatalogActivity extends AppCompatActivity
         View emptyView = findViewById(R.id.empty_view);
         petListView.setEmptyView(emptyView);
 
-        /* To access our database, we instantiate our subclass of SQLiteOpenHelper
-         and pass the context, which is the current activity.
-        */
-        mDbHelper = new PetDbHelper(this);
-
         // Setup an Adapter to create a list item for each row of pet data in the Cursor.
         // There is no pet data yet (until the loader finishes) so pass in null for the Cursor.
         mCursorAdapter = new PetCursorAdapter(this, null);
@@ -151,8 +146,13 @@ public class CatalogActivity extends AppCompatActivity
                 PetEntry.COLUMN_PET_NAME,
                 PetEntry.COLUMN_PET_BREED };
 
-        return new CursorLoader(this, PetEntry.CONTENT_URI, projection,
-                null, null, null );
+        // This loader will execute the ContentProvider's query method on a background thread
+        return new CursorLoader(this,   // Parent activity context
+                PetEntry.CONTENT_URI,   // Provider content URI to query
+                projection,             // Columns to include in the resulting Cursor
+                null,                   // No selection clause
+                null,                   // No selection arguments
+                null);                  // Default sort order
     }
 
     @Override
